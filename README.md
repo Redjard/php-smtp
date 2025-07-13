@@ -16,7 +16,7 @@ composer require snipworks/php-smtp
 use Snipworks\Smtp\Email;
 
 $mail = new Email('smtp.example.com', 25);
-$mail->setLogin('sender@example.com', 'password');
+$mail->setLogin('sender@example.com', 'password', false);  // set 3rd parameter to true to use PLAIN auth instead of LOGIN auth
 $mail->addTo('recipient@example.com', 'Example Receiver');
 $mail->setFrom('example@example.com', 'Example Sender');
 $mail->setSubject('Example subject');
@@ -38,7 +38,7 @@ use Snipworks\Smtp\Email;
 
 $mail = new Email('smtp.example.com', 587);
 $mail->setProtocol(Email::TLS);
-$mail->setLogin('sender@example.com', 'password');
+$mail->setLogin('sender@example.com', 'password', false);  // set 3rd parameter to true to use PLAIN auth instead of LOGIN auth
 $mail->addTo('recipient@example.com', 'Example Receiver');
 $mail->setFrom('example@example.com', 'Example Sender');
 $mail->setSubject('Example subject');
@@ -67,7 +67,7 @@ define('SMTP_PRIMARY_PASSWORD', 'my very secret password');
 
 require_once('config.php');
 // ...
-$mail->setLogin(SMTP_PRIMARY_EMAIL, SMTP_PRIMARY_PASSWORD);
+$mail->setLogin(SMTP_PRIMARY_EMAIL, SMTP_PRIMARY_PASSWORD, false);
 // ...
 ```
 
