@@ -33,6 +33,9 @@ class Email
     /** @var string $password */
     protected $password;
 
+    /** @var bool $plain_auth */
+    protected $plain_auth;
+
     /** @var int $connectionTimeout */
     protected $connectionTimeout;
 
@@ -195,10 +198,11 @@ class Email
      * @param string $password
      * @return Email
      */
-    public function setLogin($username, $password)
+    public function setLogin($username, $password, $plain_auth = false)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->plain_auth = $plain_auth;
 
         return $this;
     }
@@ -327,9 +331,15 @@ class Email
             $this->logs['HELLO'][2] = $this->sendCommand('EHLO ' . $this->hostname);
         }
 
-        $this->logs['AUTH'] = $this->sendCommand('AUTH LOGIN');
-        $this->logs['USERNAME'] = $this->sendCommand(base64_encode($this->username));
-        $this->logs['PASSWORD'] = $this->sendCommand(base64_encode($this->password));
+        if ($this->plain_auth) {
+            $this->logs['AUTH'] = $this->sendCommand('AUTH PLAIN');
+            $this->logs['AUTH_PLAIN'] = $this->sendCommand(base64_encode( "\0". $this->username ."\0". $this->password ));
+        } else {
+            $this->logs['AUTH'] = $this->sendCommand('AUTH LOGIN');
+            $this->logs['USERNAME'] = $this->sendCommand(base64_encode($this->username));
+            $this->logs['PASSWORD'] = $this->sendCommand(base64_encode($this->password));
+        }
+        
         $this->logs['MAIL_FROM'] = $this->sendCommand('MAIL FROM: <' . $this->from[0] . '>');
 
         $recipients = array_merge($this->to, $this->cc, $this->bcc);
